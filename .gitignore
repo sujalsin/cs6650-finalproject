@@ -1,0 +1,28 @@
+# Terraform state and caches
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/terraform.tfstate.localstack
+*.tfstate
+*.tfstate.*
+
+# Local override files
+terraform/localstack_providers_override.tf
+
+# Build artifacts
+function.zip
+function\ 2.zip
+package/
+__pycache__/
+
+# Metrics and generated data
+data/metrics_local.csv
+data/metrics_aws.csv
+
+# OS / editor junk
+.DS_Store
+.vscode/
+.idea/
+
+
