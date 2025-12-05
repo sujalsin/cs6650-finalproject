@@ -25,6 +25,9 @@ def lambda_handler(event, context):
     """
     global _is_warm
     
+    # Start timing the actual execution
+    start_time = time.time()
+    
     # Detect cold start
     is_cold_start = not _is_warm
     _is_warm = True
@@ -59,32 +62,37 @@ def lambda_handler(event, context):
             
             # Simulate processing latency (200ms - 2000ms based on complexity)
             base_latency = 200 + (complexity_score * 1800)  # 200ms to 2000ms
-            processing_latency_ms = base_latency
+            simulated_latency_ms = base_latency
             
             # 5% chance of long tail delay (extra 1 second)
             if random.random() < 0.05:
-                processing_latency_ms += 1000
+                simulated_latency_ms += 1000
                 print("Long tail delay triggered (+1000ms)")
             
             # Simulate the processing time
-            time.sleep(processing_latency_ms / 1000.0)
+            time.sleep(simulated_latency_ms / 1000.0)
             
             # Simulate classification (random choice)
             classification = random.choice(["Document", "Receipt", "Photo"])
             
+            # Measure actual end-to-end execution time (includes all AWS overhead)
+            end_time = time.time()
+            actual_execution_time_ms = (end_time - start_time) * 1000.0
+            
             # Prepare DynamoDB record
-            # DynamoDB doesn't support float, so convert to Decimal or use int for latency
+            # DynamoDB doesn't support float, so convert to Decimal
             from decimal import Decimal
             record_data = {
                 'filename': object_key,
                 'file_size': file_size,
-                'processing_latency': Decimal(str(round(processing_latency_ms, 2))),
+                'processing_latency': Decimal(str(round(actual_execution_time_ms, 2))),  # Store ACTUAL execution time
                 'is_cold_start': is_cold_start,
                 'simulated_classification': classification,
                 'width': width,
                 'height': height,
                 'format': image_format,
-                'timestamp': int(time.time())
+                'timestamp': int(time.time()),
+                'simulated_latency': Decimal(str(round(simulated_latency_ms, 2)))  # Also store simulated for comparison
             }
             
             # Write to DynamoDB
@@ -92,6 +100,7 @@ def lambda_handler(event, context):
             table.put_item(Item=record_data)
             
             print(f"Successfully processed and stored: {object_key}")
+            print(f"Simulated latency: {simulated_latency_ms:.2f}ms, Actual execution time: {actual_execution_time_ms:.2f}ms")
             
             return {
                 'statusCode': 200,
@@ -99,7 +108,9 @@ def lambda_handler(event, context):
                     'message': 'Image processed successfully',
                     'filename': object_key,
                     'classification': classification,
-                    'is_cold_start': is_cold_start
+                    'is_cold_start': is_cold_start,
+                    'simulated_latency_ms': simulated_latency_ms,
+                    'actual_execution_time_ms': actual_execution_time_ms
                 })
             }
     

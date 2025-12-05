@@ -150,9 +150,9 @@ def upload_images(env, bucket_name):
                     if temp_path and os.path.exists(temp_path):
                         os.remove(temp_path)
     
-    print(f"\n✓ Successfully uploaded {uploaded}/{total_images} images")
-    print(f"✓ Images are being processed by Lambda function")
-    print(f"✓ Wait a few minutes, then run extract_metrics.py to collect results")
+    print(f"\n Successfully uploaded {uploaded}/{total_images} images")
+    print(f" Images are being processed by Lambda function")
+    print(f" Wait a few minutes, then run extract_metrics.py to collect results")
 
 
 def main():
@@ -184,4 +184,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

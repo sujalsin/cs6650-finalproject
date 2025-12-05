@@ -99,3 +99,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     trigger_lambda_for_objects(args.env, args.bucket, args.prefix)
 
+

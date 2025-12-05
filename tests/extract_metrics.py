@@ -126,7 +126,7 @@ def save_metrics(df, env):
     output_file = f'data/metrics_{env}.csv'
     df.to_csv(output_file, index=False)
     
-    print(f"\n✓ Metrics saved to: {output_file}")
+    print(f"\n Metrics saved to: {output_file}")
     print(f"  Total records: {len(df)}")
     print(f"  Columns: {', '.join(df.columns.tolist())}")
     
